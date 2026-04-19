@@ -1,0 +1,160 @@
+===============================================================
+TOKENIZATION
+
+
+Keyword: int
+Identifier: a
+Punctuation: ;
+Keyword: int
+Identifier: b
+Punctuation: ;
+Identifier: a
+Relational/Assignment Operator: =
+Constant: 5
+Punctuation: ;
+Identifier: b
+Relational/Assignment Operator: =
+Constant: 10
+Punctuation: ;
+Keyword: print
+Identifier: a
+Arithmetic Operator: +
+Identifier: b
+Punctuation: ;
+Keyword: int
+Identifier: i
+Punctuation: ;
+Identifier: i
+Relational/Assignment Operator: =
+Constant: 0
+Punctuation: ;
+Keyword: while
+Parenthesis: (
+Identifier: i
+Relational/Assignment Operator: <
+Constant: 5
+Parenthesis: )
+Braces: {
+Keyword: print
+Identifier: i
+Punctuation: ;
+Identifier: i
+Relational/Assignment Operator: =
+Identifier: i
+Arithmetic Operator: +
+Constant: 1
+Punctuation: ;
+Braces: }
+
+Symbol Table:
+i offset -24
+a offset -8
+b offset -16
+
+Intermediate Code (TAC):
+t0 = 5
+a = t0
+t1 = 10
+b = t1
+t2 = a
+t3 = b
+t4 = t2 + t3
+PRINT t4
+t5 = 0
+i = t5
+L0:
+t6 = i
+t7 = 5
+IF t6 < t7 GOTO L1
+GOTO L2
+L1:
+t8 = i
+PRINT t8
+t9 = i
+t10 = 1
+t11 = t9 + t10
+i = t11
+GOTO L0
+L2:
+
+Simple Assembly:
+.locals i, a, b
+
+MOV a, 5
+MOV b, 10
+PRINT (a + b)
+MOV i, 0
+L0:
+IF (i < 5) GOTO L1
+GOTO L2
+L1:
+PRINT i
+MOV i, (i + 1)
+GOTO L0
+L2:
+HALT
+
+Assembly Code (x86):
+.data
+fmt: .string "%d\n"
+.text
+.global main
+main:
+	pushq %rbp
+	movq %rsp, %rbp
+	subq $32, %rsp
+	pushq $5
+	popq %rax
+	movq %rax, -8(%rbp)
+	pushq $10
+	popq %rax
+	movq %rax, -16(%rbp)
+	pushq -8(%rbp)
+	pushq -16(%rbp)
+	popq %rbx
+	popq %rax
+	addq %rbx, %rax
+	pushq %rax
+	popq %rsi
+	movq $fmt, %rdi
+	movq $0, %rax
+	call printf
+	pushq $0
+	popq %rax
+	movq %rax, -24(%rbp)
+L0:
+	pushq -24(%rbp)
+	pushq $5
+	popq %rbx
+	popq %rax
+	cmpq %rbx, %rax
+	jl L1
+	jmp L2
+L1:
+	pushq -24(%rbp)
+	popq %rsi
+	movq $fmt, %rdi
+	movq $0, %rax
+	call printf
+	pushq -24(%rbp)
+	pushq $1
+	popq %rbx
+	popq %rax
+	addq %rbx, %rax
+	pushq %rax
+	popq %rax
+	movq %rax, -24(%rbp)
+	jmp L0
+L2:
+	movq $0, %rax
+	movq %rbp, %rsp
+	popq %rbp
+	ret
+
+Program Output:
+15
+0
+1
+2
+3
+4
