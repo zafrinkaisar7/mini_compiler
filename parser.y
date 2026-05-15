@@ -65,6 +65,24 @@ static struct node *mkconst(int val) {
     n->num = val;
     return n;
 }
+/* ---------------- Parse Tree ---------------- */
+
+static void print_tree(struct node *tree, int level)
+{
+    if(tree == NULL)
+        return;
+
+    for(int i = 0; i < level; i++)
+        printf("   ");
+
+    if(strcmp(tree->token, "#") == 0)
+        printf("%d\n", tree->num);
+    else
+        printf("%s\n", tree->token);
+
+    print_tree(tree->left, level + 1);
+    print_tree(tree->right, level + 1);
+}
 
 static struct node *head = NULL;
 static int var_count = 0;
@@ -509,25 +527,33 @@ void yyerror(const char *s) {
 int main(void) {
     yyparse();
 
+    /* -------- Parse Tree -------- */
+    printf("\n========================\n");
+    printf("PARSE TREE\n");
+    printf("========================\n\n");
+
+    print_tree(head, 0);
+
+    /* -------- Symbol Table -------- */
     printf("\nSymbol Table:\n");
     for (int i = 0; i < HASHSIZE; i++)
         for (struct Symbol *s = hashtable[i]; s; s = s->next)
             printf("%s offset %d\n", s->name, s->offset);
 
-    /* TAC */
+    /* -------- TAC -------- */
     reset_codegen();
     gen_statements(head);
     print_icg();
 
-    /* Simple Assembly */
+    /* -------- Simple Assembly -------- */
     print_simple_assembly();
 
-    /* GAS x86-64 */
+    /* -------- GAS x86-64 -------- */
     label_idx = 0;
     print_gas_assembly();
 
-    /* Run program */
+    /* -------- Program Output -------- */
     print_program_output();
+
     return 0;
 }
-

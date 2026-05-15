@@ -135,6 +135,24 @@ static struct node *mkconst(int val) {
     n->num = val;
     return n;
 }
+/* ---------------- Parse Tree ---------------- */
+
+static void print_tree(struct node *tree, int level)
+{
+    if(tree == NULL)
+        return;
+
+    for(int i = 0; i < level; i++)
+        printf("   ");
+
+    if(strcmp(tree->token, "#") == 0)
+        printf("%d\n", tree->num);
+    else
+        printf("%s\n", tree->token);
+
+    print_tree(tree->left, level + 1);
+    print_tree(tree->right, level + 1);
+}
 
 static struct node *head = NULL;
 static int var_count = 0;
@@ -479,7 +497,7 @@ static void exec_statement(struct node *stmt) {
 static void exec_statements(struct node *n) { if(n){ exec_statement(n->left); exec_statements(n->right);} }
 static void print_program_output(void) { printf("\nProgram Output:\n"); exec_statements(head); }
 
-#line 483 "parser.tab.c"
+#line 501 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -933,10 +951,10 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   428,   428,   431,   432,   436,   437,   438,   439,   440,
-     444,   454,   463,   464,   465,   469,   470,   471,   475,   476,
-     477,   481,   482,   483,   484,   485,   486,   490,   491,   495,
-     499
+       0,   446,   446,   449,   450,   454,   455,   456,   457,   458,
+     462,   472,   481,   482,   483,   487,   488,   489,   493,   494,
+     495,   499,   500,   501,   502,   503,   504,   508,   509,   513,
+     517
 };
 #endif
 
@@ -1534,190 +1552,190 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* program: statements  */
-#line 428 "parser.y"
+#line 446 "parser.y"
                      { head = (yyvsp[0].nd); (yyval.nd) = (yyvsp[0].nd); }
-#line 1540 "parser.tab.c"
-    break;
-
-  case 3: /* statements: statement statements  */
-#line 431 "parser.y"
-                           { (yyval.nd) = mknode((yyvsp[-1].nd), (yyvsp[0].nd), "statements"); }
-#line 1546 "parser.tab.c"
-    break;
-
-  case 4: /* statements: %empty  */
-#line 432 "parser.y"
-                           { (yyval.nd) = NULL; }
-#line 1552 "parser.tab.c"
-    break;
-
-  case 5: /* statement: decl  */
-#line 436 "parser.y"
-                   { (yyval.nd) = (yyvsp[0].nd); }
 #line 1558 "parser.tab.c"
     break;
 
-  case 6: /* statement: assign  */
-#line 437 "parser.y"
-                   { (yyval.nd) = (yyvsp[0].nd); }
+  case 3: /* statements: statement statements  */
+#line 449 "parser.y"
+                           { (yyval.nd) = mknode((yyvsp[-1].nd), (yyvsp[0].nd), "statements"); }
 #line 1564 "parser.tab.c"
     break;
 
-  case 7: /* statement: if_stmt  */
-#line 438 "parser.y"
-                   { (yyval.nd) = (yyvsp[0].nd); }
+  case 4: /* statements: %empty  */
+#line 450 "parser.y"
+                           { (yyval.nd) = NULL; }
 #line 1570 "parser.tab.c"
     break;
 
-  case 8: /* statement: while_stmt  */
-#line 439 "parser.y"
+  case 5: /* statement: decl  */
+#line 454 "parser.y"
                    { (yyval.nd) = (yyvsp[0].nd); }
 #line 1576 "parser.tab.c"
     break;
 
-  case 9: /* statement: print_stmt  */
-#line 440 "parser.y"
+  case 6: /* statement: assign  */
+#line 455 "parser.y"
                    { (yyval.nd) = (yyvsp[0].nd); }
 #line 1582 "parser.tab.c"
     break;
 
+  case 7: /* statement: if_stmt  */
+#line 456 "parser.y"
+                   { (yyval.nd) = (yyvsp[0].nd); }
+#line 1588 "parser.tab.c"
+    break;
+
+  case 8: /* statement: while_stmt  */
+#line 457 "parser.y"
+                   { (yyval.nd) = (yyvsp[0].nd); }
+#line 1594 "parser.tab.c"
+    break;
+
+  case 9: /* statement: print_stmt  */
+#line 458 "parser.y"
+                   { (yyval.nd) = (yyvsp[0].nd); }
+#line 1600 "parser.tab.c"
+    break;
+
   case 10: /* decl: INT ID ';'  */
-#line 445 "parser.y"
+#line 463 "parser.y"
       {
         if (lookup((yyvsp[-1].str))) yyerror("Redeclaration");
         insert((yyvsp[-1].str), -8 * (++var_count));  /* negative offsets: safe */
         struct node *idnode = mknode(NULL, NULL, (yyvsp[-1].str));
         (yyval.nd) = mknode(idnode, NULL, "decl");
       }
-#line 1593 "parser.tab.c"
+#line 1611 "parser.tab.c"
     break;
 
   case 11: /* assign: ID '=' expr ';'  */
-#line 455 "parser.y"
+#line 473 "parser.y"
       {
         if (!lookup((yyvsp[-3].str))) yyerror("Undeclared variable");
         struct node *idnode = mknode(NULL, NULL, (yyvsp[-3].str));
         (yyval.nd) = mknode(idnode, (yyvsp[-1].nd), "assign");
       }
-#line 1603 "parser.tab.c"
-    break;
-
-  case 12: /* expr: expr '+' term  */
-#line 463 "parser.y"
-                      { (yyval.nd) = mknode((yyvsp[-2].nd), (yyvsp[0].nd), "+"); }
-#line 1609 "parser.tab.c"
-    break;
-
-  case 13: /* expr: expr '-' term  */
-#line 464 "parser.y"
-                      { (yyval.nd) = mknode((yyvsp[-2].nd), (yyvsp[0].nd), "-"); }
-#line 1615 "parser.tab.c"
-    break;
-
-  case 14: /* expr: term  */
-#line 465 "parser.y"
-                      { (yyval.nd) = (yyvsp[0].nd); }
 #line 1621 "parser.tab.c"
     break;
 
-  case 15: /* term: term '*' factor  */
-#line 469 "parser.y"
-                      { (yyval.nd) = mknode((yyvsp[-2].nd), (yyvsp[0].nd), "*"); }
+  case 12: /* expr: expr '+' term  */
+#line 481 "parser.y"
+                      { (yyval.nd) = mknode((yyvsp[-2].nd), (yyvsp[0].nd), "+"); }
 #line 1627 "parser.tab.c"
     break;
 
-  case 16: /* term: term '/' factor  */
-#line 470 "parser.y"
-                      { (yyval.nd) = mknode((yyvsp[-2].nd), (yyvsp[0].nd), "/"); }
+  case 13: /* expr: expr '-' term  */
+#line 482 "parser.y"
+                      { (yyval.nd) = mknode((yyvsp[-2].nd), (yyvsp[0].nd), "-"); }
 #line 1633 "parser.tab.c"
     break;
 
-  case 17: /* term: factor  */
-#line 471 "parser.y"
+  case 14: /* expr: term  */
+#line 483 "parser.y"
                       { (yyval.nd) = (yyvsp[0].nd); }
 #line 1639 "parser.tab.c"
     break;
 
-  case 18: /* factor: '(' expr ')'  */
-#line 475 "parser.y"
-                      { (yyval.nd) = (yyvsp[-1].nd); }
+  case 15: /* term: term '*' factor  */
+#line 487 "parser.y"
+                      { (yyval.nd) = mknode((yyvsp[-2].nd), (yyvsp[0].nd), "*"); }
 #line 1645 "parser.tab.c"
     break;
 
-  case 19: /* factor: ID  */
-#line 476 "parser.y"
-                      { (yyval.nd) = mknode(NULL, NULL, (yyvsp[0].str)); }
+  case 16: /* term: term '/' factor  */
+#line 488 "parser.y"
+                      { (yyval.nd) = mknode((yyvsp[-2].nd), (yyvsp[0].nd), "/"); }
 #line 1651 "parser.tab.c"
     break;
 
-  case 20: /* factor: NUMBER  */
-#line 477 "parser.y"
-                      { (yyval.nd) = mkconst((yyvsp[0].num)); }
+  case 17: /* term: factor  */
+#line 489 "parser.y"
+                      { (yyval.nd) = (yyvsp[0].nd); }
 #line 1657 "parser.tab.c"
     break;
 
-  case 21: /* cond: expr EQ expr  */
-#line 481 "parser.y"
-                      { (yyval.nd) = mknode((yyvsp[-2].nd), (yyvsp[0].nd), "=="); }
+  case 18: /* factor: '(' expr ')'  */
+#line 493 "parser.y"
+                      { (yyval.nd) = (yyvsp[-1].nd); }
 #line 1663 "parser.tab.c"
     break;
 
-  case 22: /* cond: expr NE expr  */
-#line 482 "parser.y"
-                      { (yyval.nd) = mknode((yyvsp[-2].nd), (yyvsp[0].nd), "!="); }
+  case 19: /* factor: ID  */
+#line 494 "parser.y"
+                      { (yyval.nd) = mknode(NULL, NULL, (yyvsp[0].str)); }
 #line 1669 "parser.tab.c"
     break;
 
-  case 23: /* cond: expr GT expr  */
-#line 483 "parser.y"
-                      { (yyval.nd) = mknode((yyvsp[-2].nd), (yyvsp[0].nd), ">"); }
+  case 20: /* factor: NUMBER  */
+#line 495 "parser.y"
+                      { (yyval.nd) = mkconst((yyvsp[0].num)); }
 #line 1675 "parser.tab.c"
     break;
 
-  case 24: /* cond: expr LT expr  */
-#line 484 "parser.y"
-                      { (yyval.nd) = mknode((yyvsp[-2].nd), (yyvsp[0].nd), "<"); }
+  case 21: /* cond: expr EQ expr  */
+#line 499 "parser.y"
+                      { (yyval.nd) = mknode((yyvsp[-2].nd), (yyvsp[0].nd), "=="); }
 #line 1681 "parser.tab.c"
     break;
 
-  case 25: /* cond: expr GE expr  */
-#line 485 "parser.y"
-                      { (yyval.nd) = mknode((yyvsp[-2].nd), (yyvsp[0].nd), ">="); }
+  case 22: /* cond: expr NE expr  */
+#line 500 "parser.y"
+                      { (yyval.nd) = mknode((yyvsp[-2].nd), (yyvsp[0].nd), "!="); }
 #line 1687 "parser.tab.c"
     break;
 
-  case 26: /* cond: expr LE expr  */
-#line 486 "parser.y"
-                      { (yyval.nd) = mknode((yyvsp[-2].nd), (yyvsp[0].nd), "<="); }
+  case 23: /* cond: expr GT expr  */
+#line 501 "parser.y"
+                      { (yyval.nd) = mknode((yyvsp[-2].nd), (yyvsp[0].nd), ">"); }
 #line 1693 "parser.tab.c"
     break;
 
-  case 27: /* if_stmt: IF '(' cond ')' '{' statements '}'  */
-#line 490 "parser.y"
-                                                            { (yyval.nd) = mknode((yyvsp[-4].nd), mknode((yyvsp[-1].nd), NULL, "else"), "if"); }
+  case 24: /* cond: expr LT expr  */
+#line 502 "parser.y"
+                      { (yyval.nd) = mknode((yyvsp[-2].nd), (yyvsp[0].nd), "<"); }
 #line 1699 "parser.tab.c"
     break;
 
-  case 28: /* if_stmt: IF '(' cond ')' '{' statements '}' ELSE '{' statements '}'  */
-#line 491 "parser.y"
-                                                                 { (yyval.nd) = mknode((yyvsp[-8].nd), mknode((yyvsp[-5].nd), (yyvsp[-1].nd), "else"), "if"); }
+  case 25: /* cond: expr GE expr  */
+#line 503 "parser.y"
+                      { (yyval.nd) = mknode((yyvsp[-2].nd), (yyvsp[0].nd), ">="); }
 #line 1705 "parser.tab.c"
     break;
 
-  case 29: /* while_stmt: WHILE '(' cond ')' '{' statements '}'  */
-#line 495 "parser.y"
-                                            { (yyval.nd) = mknode((yyvsp[-4].nd), (yyvsp[-1].nd), "while"); }
+  case 26: /* cond: expr LE expr  */
+#line 504 "parser.y"
+                      { (yyval.nd) = mknode((yyvsp[-2].nd), (yyvsp[0].nd), "<="); }
 #line 1711 "parser.tab.c"
     break;
 
-  case 30: /* print_stmt: PRINT expr ';'  */
-#line 499 "parser.y"
-                      { (yyval.nd) = mknode((yyvsp[-1].nd), NULL, "print"); }
+  case 27: /* if_stmt: IF '(' cond ')' '{' statements '}'  */
+#line 508 "parser.y"
+                                                            { (yyval.nd) = mknode((yyvsp[-4].nd), mknode((yyvsp[-1].nd), NULL, "else"), "if"); }
 #line 1717 "parser.tab.c"
     break;
 
+  case 28: /* if_stmt: IF '(' cond ')' '{' statements '}' ELSE '{' statements '}'  */
+#line 509 "parser.y"
+                                                                 { (yyval.nd) = mknode((yyvsp[-8].nd), mknode((yyvsp[-5].nd), (yyvsp[-1].nd), "else"), "if"); }
+#line 1723 "parser.tab.c"
+    break;
 
-#line 1721 "parser.tab.c"
+  case 29: /* while_stmt: WHILE '(' cond ')' '{' statements '}'  */
+#line 513 "parser.y"
+                                            { (yyval.nd) = mknode((yyvsp[-4].nd), (yyvsp[-1].nd), "while"); }
+#line 1729 "parser.tab.c"
+    break;
+
+  case 30: /* print_stmt: PRINT expr ';'  */
+#line 517 "parser.y"
+                      { (yyval.nd) = mknode((yyvsp[-1].nd), NULL, "print"); }
+#line 1735 "parser.tab.c"
+    break;
+
+
+#line 1739 "parser.tab.c"
 
       default: break;
     }
@@ -1910,7 +1928,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 502 "parser.y"
+#line 520 "parser.y"
   /* ---------- C epilogue ---------- */
 
 void yyerror(const char *s) {
@@ -1921,25 +1939,33 @@ void yyerror(const char *s) {
 int main(void) {
     yyparse();
 
+    /* -------- Parse Tree -------- */
+    printf("\n========================\n");
+    printf("PARSE TREE\n");
+    printf("========================\n\n");
+
+    print_tree(head, 0);
+
+    /* -------- Symbol Table -------- */
     printf("\nSymbol Table:\n");
     for (int i = 0; i < HASHSIZE; i++)
         for (struct Symbol *s = hashtable[i]; s; s = s->next)
             printf("%s offset %d\n", s->name, s->offset);
 
-    /* TAC */
+    /* -------- TAC -------- */
     reset_codegen();
     gen_statements(head);
     print_icg();
 
-    /* Simple Assembly */
+    /* -------- Simple Assembly -------- */
     print_simple_assembly();
 
-    /* GAS x86-64 */
+    /* -------- GAS x86-64 -------- */
     label_idx = 0;
     print_gas_assembly();
 
-    /* Run program */
+    /* -------- Program Output -------- */
     print_program_output();
+
     return 0;
 }
-
